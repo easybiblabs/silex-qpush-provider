@@ -1,0 +1,14 @@
+{
+    "name": "easybib/silex-qpush-provider",
+    "description": "Silex service provider for uecode/qpush-bundle",
+    "require": {
+        "uecode/qpush-bundle": "^2.2"
+    },
+    "license": "Apache 2.0",
+    "authors": [
+        {
+            "name": "Stephan Vock",
+            "email": "stephan.vock@gmail.com"
+        }
+    ]
+}
