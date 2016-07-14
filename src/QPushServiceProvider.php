@@ -190,10 +190,10 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 $provider = $app['uecode_qpush.queues'][$name];
                 call_user_func([$provider, 'onMessageReceived'], $event);
             };
-            $dispatcher->addListener(Events::Message($name), $handleMessageBuiltIn, 255);
-            $dispatcher->addListener(Events::Notification($name), $handleNotificationBuiltIn, 255);
+            $dispatcher->addListener(Events::Message($name), $handleMessageBuiltIn, -255);
+            $dispatcher->addListener(Events::Notification($name), $handleNotificationBuiltIn, -255);
             if (isset($options['options']['queue_name'])) {
-                $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $handleNotificationBuiltIn, 255);
+                $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $handleNotificationBuiltIn, -255);
             }
         }
     }
