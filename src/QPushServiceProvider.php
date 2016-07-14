@@ -154,7 +154,19 @@ class QPushServiceProvider implements ServiceProviderInterface
                 $dispatcher->addListener(Events::Notification($name), $log);
 
                 if (isset($options['queue_name'])) {
-                    $dispatcher->addListener(Events::Message($options['options']['queue_name']), $log);
+                    $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $log);
+                }
+            }
+
+            foreach ($options['callback'] as $callback) {
+                $handleEvent = function (Event $event) use ($app, $callback) {
+                    call_user_func($app['callback_resolver']->resolveCallback($callback), $event);
+                };
+
+                $dispatcher->addListener(Events::Message($name), $handleEvent);
+                $dispatcher->addListener(Events::Notification($name), $handleEvent);
+
+                if (isset($options['queue_name'])) {
                     $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $log);
                 }
             }

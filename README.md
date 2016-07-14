@@ -17,11 +17,13 @@ $app->register(new \EasyBib\QPushServiceProvider(), [
         'queues' => [
             'my_queue' => [
                 'provider' => 'aws',
+                'callback' => [
+                   'service:method',
+                ],
                 'options' => [
                     'logging_enabled' => true,
                     'queue_name' => 'my_queue',
                     'push_notifications' => false,
-                    'notification_retries' => 0,
                     'message_delay' =>  0,
                     'message_timeout' => 30,
                     'message_expiration' => 604800,
