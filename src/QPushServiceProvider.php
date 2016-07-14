@@ -152,6 +152,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
         };
 
         foreach ($app['uecode_qpush.config']['queues'] as $name => $options) {
+            // Register debug logging if enabled
             if ($options['options']['logging_enabled']) {
                 $dispatcher->addListener(Events::Message($name), $log);
                 $dispatcher->addListener(Events::Notification($name), $log);
@@ -161,6 +162,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 }
             }
 
+            // Register callback handler to process messages/notifications
             foreach ($options['callback'] as $callback) {
                 $handleEvent = function (Event $event) use ($app, $callback) {
                     call_user_func($app['callback_resolver']->resolveCallback($callback), $event);
