@@ -162,7 +162,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 $dispatcher->addListener(Events::Message($name), $log);
                 $dispatcher->addListener(Events::Notification($name), $log);
 
-                if (isset($options['queue_name'])) {
+                if (isset($options['options']['queue_name'])) {
                     $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $log);
                 }
             }
@@ -176,9 +176,23 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 $dispatcher->addListener(Events::Message($name), $handleEvent);
                 $dispatcher->addListener(Events::Notification($name), $handleEvent);
 
-                if (isset($options['queue_name'])) {
+                if (isset($options['options']['queue_name'])) {
                     $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $log);
                 }
+            }
+
+            $handleMessageBuiltIn = function (Event $event) use ($app, $name) {
+                $provider = $app['uecode_qpush.queues'][$name];
+                call_user_func([$provider, 'onMessageReceived'], $event);
+            };
+            $handleNotificationBuiltIn = function (Event $event) use ($app, $name) {
+                $provider = $app['uecode_qpush.queues'][$name];
+                call_user_func([$provider, 'onMessageReceived'], $event);
+            };
+            $dispatcher->addListener(Events::Message($name), $handleMessageBuiltIn, 255);
+            $dispatcher->addListener(Events::Notification($name), $handleNotificationBuiltIn, 255);
+            if (isset($options['options']['queue_name'])) {
+                $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $handleNotificationBuiltIn, 255);
             }
         }
     }
