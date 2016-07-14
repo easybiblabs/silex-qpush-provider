@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Uecode\Bundle\QPushBundle\Event\Events;
 use Uecode\Bundle\QPushBundle\Event\MessageEvent;
+use Uecode\Bundle\QPushBundle\Message\Message;
+use Uecode\Bundle\QPushBundle\Provider\AwsProvider;
 use Uecode\Bundle\QPushBundle\Provider\ProviderRegistry;
 
 class QueueWorkerCommand extends Command
@@ -66,10 +68,15 @@ class QueueWorkerCommand extends Command
             );
         }
 
-        $messages = $this->registry->get($name)->receive();
+        $provider = $this->registry->get($name);
+        /** @var Message[] $messages */
+        $messages = $provider->receive();
         foreach ($messages as $message) {
             $messageEvent = new MessageEvent($name, $message);
             $this->dispatcher->dispatch(Events::Message($name), $messageEvent);
+            if ($provider instanceof AwsProvider) {
+                $provider->delete($message->getMetadata()->get('ReceiptHandle'));
+            }
         }
 
         $msg = '<info>Finished polling %s Queue, %d messages fetched.</info>';
