@@ -181,6 +181,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 }
             }
 
+            // Register built in message/notification listener
             $handleMessageBuiltIn = function (Event $event) use ($app, $name) {
                 $provider = $app['uecode_qpush.queues'][$name];
                 call_user_func([$provider, 'onMessageReceived'], $event);
