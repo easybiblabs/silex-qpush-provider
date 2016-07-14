@@ -75,8 +75,8 @@ class QPushServiceProvider implements ServiceProviderInterface
             } else {
                 if (!empty($options['key']) && !empty($options['secret'])) {
                     $options['credentials'] = [
-                        'key'    => $options['key'],
-                        'secret' => $options['secret']
+                        'key' => $options['key'],
+                        'secret' => $options['secret'],
                     ];
                 }
                 $options['version'] = 'latest';
@@ -94,28 +94,28 @@ class QPushServiceProvider implements ServiceProviderInterface
         };
 
         $pimple['uecode_qpush.command.build'] = function (Container $pimple) {
-            $command =  new QueueBuildCommand();
+            $command = new QueueBuildCommand();
             $command->setContainer($pimple['uecode_qpush.command.container']);
 
             return $command;
         };
 
         $pimple['uecode_qpush.command.destroy'] = function (Container $pimple) {
-            $command =  new QueueDestroyCommand();
+            $command = new QueueDestroyCommand();
             $command->setContainer($pimple['uecode_qpush.command.container']);
 
             return $command;
         };
 
         $pimple['uecode_qpush.command.publish'] = function (Container $pimple) {
-            $command =  new QueuePublishCommand();
+            $command = new QueuePublishCommand();
             $command->setContainer($pimple['uecode_qpush.command.container']);
 
             return $command;
         };
 
         $pimple['uecode_qpush.command.receive'] = function (Container $pimple) {
-            $command =  new QueueReceiveCommand();
+            $command = new QueueReceiveCommand();
             $command->setContainer($pimple['uecode_qpush.command.container']);
 
             return $command;
