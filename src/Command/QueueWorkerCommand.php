@@ -50,6 +50,13 @@ class QueueWorkerCommand extends Command
         $name = $input->getArgument('name');
         $processMessageLimit = $input->getOption('messages');
         $sleep = $input->getOption('sleep');
+
+        if (!$this->registry->has($name)) {
+            return $this->output->writeln(
+                sprintf('<error>The [%s] queue you have specified does not exists!</error>', $name)
+            );
+        }
+
         $messageCounter = 0;
         while ($processMessageLimit === null || $processMessageLimit >= $messageCounter) {
             $messageCounter += $this->pollQueue($name);
@@ -62,12 +69,6 @@ class QueueWorkerCommand extends Command
 
     private function pollQueue($name)
     {
-        if (!$this->registry->has($name)) {
-            return $this->output->writeln(
-                sprintf('The [%s] queue you have specified does not exists!', $name)
-            );
-        }
-
         $provider = $this->registry->get($name);
         /** @var Message[] $messages */
         $messages = $provider->receive();
