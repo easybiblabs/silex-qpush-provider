@@ -50,7 +50,7 @@ class QPushServiceProvider implements ServiceProviderInterface
 
         $pimple['uecode_qpush.cache'] = function (Container $pimple) {
             if (isset($pimple['uecode_qpush.config']['cache']) && $pimple->offsetExists($pimple['uecode_qpush.config']['cache'])) {
-                return $pimple['uecode_qpush.config']['cache'];
+                return $pimple[$pimple['uecode_qpush.config']['cache']];
             }
 
             return new ArrayCache();
