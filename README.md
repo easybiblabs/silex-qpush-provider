@@ -18,6 +18,7 @@ $app->register(new \EasyBib\QPushServiceProvider(), [
             'my_queue' => [
                 'provider' => 'aws',
                 'options' => [
+                    'logging_enabled' => true,
                     'queue_name' => 'my_queue',
                     'push_notifications' => false,
                     'notification_retries' => 0,

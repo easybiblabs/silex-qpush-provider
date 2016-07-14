@@ -5,10 +5,15 @@ namespace EasyBib;
 use Doctrine\Common\Cache\ArrayCache;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Uecode\Bundle\QPushBundle\Command\QueueBuildCommand;
 use Uecode\Bundle\QPushBundle\Command\QueueDestroyCommand;
 use Uecode\Bundle\QPushBundle\Command\QueuePublishCommand;
 use Uecode\Bundle\QPushBundle\Command\QueueReceiveCommand;
+use Uecode\Bundle\QPushBundle\Event\Events;
+use Uecode\Bundle\QPushBundle\Event\MessageEvent;
+use Uecode\Bundle\QPushBundle\Event\NotificationEvent;
 use Uecode\Bundle\QPushBundle\Provider\AwsProvider;
 use Uecode\Bundle\QPushBundle\Provider\ProviderRegistry;
 
@@ -36,7 +41,7 @@ class QPushServiceProvider implements ServiceProviderInterface
                 $queues[$name] = function () use ($name, $options, $pimple) {
                     $providerConfig = $pimple['uecode_qpush.config']['providers'][$options['provider']];
 
-                    return $pimple['uecode_qpush.providerfactory']($name, $options, $providerConfig);
+                    return $pimple['uecode_qpush.providerfactory']($name, $options['options'], $providerConfig);
                 };
             }
 
@@ -115,5 +120,44 @@ class QPushServiceProvider implements ServiceProviderInterface
 
             return $command;
         };
+    }
+
+    public function subscribe(Container $app, EventDispatcherInterface $dispatcher)
+    {
+        $log = function (Event $event) use ($app) {
+            if ($event instanceof MessageEvent) {
+                $app['logger']->info('Queue Message received', [
+                    'queue' => $event->getQueueName(),
+                    'message' => [
+                        'id' => $event->getMessage()->getId(),
+                        'body' => $event->getMessage()->getBody(),
+                        'metadata' => $event->getMessage()->getMetadata(),
+                    ],
+                ]);
+            } elseif ($event instanceof NotificationEvent) {
+                $app['logger']->info('Queue Notification received', [
+                    'queue' => $event->getQueueName(),
+                    'type' => $event->getType(),
+                    'notification' => [
+                        'id' => $event->getNotification()->getId(),
+                        'body' => $event->getNotification()->getBody(),
+                        'metadata' => $event->getNotification()->getMetadata(),
+                    ],
+                ]);
+            }
+
+        };
+
+        foreach ($app['uecode_qpush.config']['queues'] as $name => $options) {
+            if ($options['options']['logging_enabled']) {
+                $dispatcher->addListener(Events::Message($name), $log);
+                $dispatcher->addListener(Events::Notification($name), $log);
+
+                if (isset($options['queue_name'])) {
+                    $dispatcher->addListener(Events::Message($options['options']['queue_name']), $log);
+                    $dispatcher->addListener(Events::Notification($options['options']['queue_name']), $log);
+                }
+            }
+        }
     }
 }
