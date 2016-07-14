@@ -49,9 +49,11 @@ class QPushServiceProvider implements ServiceProviderInterface
         };
 
         $pimple['uecode_qpush.cache'] = function (Container $pimple) {
-            $cacheClass = isset($pimple['uecode_qpush.config']['cache']) ? $pimple['uecode_qpush.config']['cache'] : ArrayCache::class;
+            if (isset($pimple['uecode_qpush.config']['cache']) && $pimple->offsetExists($pimple['uecode_qpush.config']['cache'])) {
+                return $pimple['uecode_qpush.config']['cache'];
+            }
 
-            return new $cacheClass();
+            return new ArrayCache();
         };
 
         $pimple['uecode_qpush.providerfactory'] = $pimple->protect(function ($name, $options, $providerConfig) use ($pimple) {

@@ -5,7 +5,7 @@ Silex service provider for uecode/qpush-bundle
 ```php
 $app->register(new \EasyBib\QPushServiceProvider(), [
     'uecode_qpush.config' => [
-        'cache' => \Doctrine\Common\Cache\ArrayCache::class,
+        'cache' => 'my.cache.service',
         'providers' => [
             'aws' => [
                 'driver' => 'aws',
