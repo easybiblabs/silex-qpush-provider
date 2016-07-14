@@ -5,6 +5,7 @@ namespace EasyBib;
 use Doctrine\Common\Cache\ArrayCache;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Silex\Api\EventListenerProviderInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Uecode\Bundle\QPushBundle\Command\QueueBuildCommand;
@@ -17,7 +18,7 @@ use Uecode\Bundle\QPushBundle\Event\NotificationEvent;
 use Uecode\Bundle\QPushBundle\Provider\AwsProvider;
 use Uecode\Bundle\QPushBundle\Provider\ProviderRegistry;
 
-class QPushServiceProvider implements ServiceProviderInterface
+class QPushServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface
 {
     public function register(Container $pimple)
     {
