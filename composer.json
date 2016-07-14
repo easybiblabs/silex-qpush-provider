@@ -1,8 +1,14 @@
 {
     "name": "easybib/silex-qpush-provider",
     "description": "Silex service provider for uecode/qpush-bundle",
+    "keywords": [
+        "queue", "silex", "sqs", "qpush"
+    ],
+
     "require": {
-        "uecode/qpush-bundle": "^2.2"
+        "php": ">=5.5.0",
+        "uecode/qpush-bundle": "^2.2",
+        "silex/silex": "^2.0"
     },
     "license": "Apache 2.0",
     "authors": [
@@ -10,5 +16,8 @@
             "name": "Stephan Vock",
             "email": "stephan.vock@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {"EasyBib\\": "src/"}
+    }
 }
