@@ -3,6 +3,7 @@
 namespace EasyBib;
 
 use Doctrine\Common\Cache\ArrayCache;
+use EasyBib\Command\QueueWorkerCommand;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\EventListenerProviderInterface;
@@ -122,6 +123,10 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
             $command->setContainer($pimple['uecode_qpush.command.container']);
 
             return $command;
+        };
+
+        $pimple['uecode_qpush.command.worker'] = function (Container $pimple) {
+            return new QueueWorkerCommand($pimple['uecode_qpush'], $pimple['dispatcher']);
         };
     }
 
