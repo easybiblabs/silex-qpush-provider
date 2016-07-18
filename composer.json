@@ -10,7 +10,7 @@
         "uecode/qpush-bundle": "^2.2",
         "silex/silex": "^2.0"
     },
-    "license": "Apache 2.0",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Stephan Vock",
@@ -19,9 +19,6 @@
     ],
     "autoload": {
         "psr-4": {"EasyBib\\": "src/"}
-    },
-    "autoload-dev": {
-        "psr-4": {"EasyBib\\Tests": "tests/"}
     },
     "require-dev": {
         "phpunit/phpunit": "^5.4",
