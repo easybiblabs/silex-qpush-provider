@@ -29,7 +29,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
 
         // Alias
         $pimple['uecode_qpush'] = function (Container $pimple) {
-            $registry =  $pimple['uecode_qpush.registry'];
+            $registry = $pimple['uecode_qpush.registry'];
             foreach (array_keys($pimple['uecode_qpush.config']['queues']) as $name) {
                 $registry->addProvider($name.$pimple['uecode_qpush.queue_suffix'], $pimple['uecode_qpush.queues'][$name]);
             }
