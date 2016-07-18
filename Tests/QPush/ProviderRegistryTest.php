@@ -24,13 +24,13 @@ class ProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $providerName = 'provider';
         $provider = $this->getMockBuilder(ProviderInterface::class)->getMock();
         $registry = new ProviderRegistry($suffix);
-        $registry->addProvider($providerName . $suffix, $provider);
+        $registry->addProvider($providerName.$suffix, $provider);
 
         // Can fetch provider without passing the suffix.
         $this->assertTrue($registry->has($providerName));
         $this->assertInstanceOf(ProviderInterface::class, $registry->get($providerName));
 
         // Can't fetch provider while passing the suffix
-        $this->assertFalse($registry->has($providerName . $suffix));
+        $this->assertFalse($registry->has($providerName.$suffix));
     }
 }
