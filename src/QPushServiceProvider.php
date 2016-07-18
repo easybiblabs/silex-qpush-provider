@@ -4,6 +4,7 @@ namespace EasyBib;
 
 use Doctrine\Common\Cache\ArrayCache;
 use EasyBib\Command\QueueWorkerCommand;
+use EasyBib\QPush\ProviderRegistry;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\EventListenerProviderInterface;
@@ -17,7 +18,6 @@ use Uecode\Bundle\QPushBundle\Event\Events;
 use Uecode\Bundle\QPushBundle\Event\MessageEvent;
 use Uecode\Bundle\QPushBundle\Event\NotificationEvent;
 use Uecode\Bundle\QPushBundle\Provider\AwsProvider;
-use Uecode\Bundle\QPushBundle\Provider\ProviderRegistry;
 
 class QPushServiceProvider implements ServiceProviderInterface, EventListenerProviderInterface
 {
@@ -25,16 +25,17 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
     {
         // Alias
         $pimple['uecode_qpush'] = function (Container $pimple) {
-            return $pimple['uecode_qpush.registry'];
-        };
-
-        $pimple['uecode_qpush.registry'] = function (Container $pimple) {
-            $registry = new ProviderRegistry();
+            $registry =  $pimple['uecode_qpush.registry'];
             foreach (array_keys($pimple['uecode_qpush.config']['queues']) as $name) {
                 $registry->addProvider($name, $pimple['uecode_qpush.queues'][$name]);
             }
 
             return $registry;
+        };
+
+        $pimple['uecode_qpush.registry'] = function (Container $pimple) {
+            $queueSuffix = isset($pimple['uecode_qpush.config']['queue_suffix']) ? $pimple['uecode_qpush.config']['queue_suffix'] : '';
+            return new ProviderRegistry($queueSuffix);
         };
 
         $pimple['uecode_qpush.queues'] = function (Container $pimple) {
@@ -91,7 +92,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
 
         $pimple['uecode_qpush.command.container'] = function (Container $pimple) {
             $container = new \Symfony\Component\DependencyInjection\Container();
-            $container->set('uecode_qpush', $pimple['uecode_qpush.registry']);
+            $container->set('uecode_qpush', $pimple['uecode_qpush']);
             $container->set('event_dispatcher', $pimple['dispatcher']);
 
             return $container;
