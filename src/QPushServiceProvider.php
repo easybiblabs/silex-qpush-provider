@@ -23,19 +23,22 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
 {
     public function register(Container $pimple)
     {
+        if (!isset($pimple['uecode_qpush.queue_suffix'])) {
+            $pimple['uecode_qpush.queue_suffix'] = '';
+        }
+
         // Alias
         $pimple['uecode_qpush'] = function (Container $pimple) {
             $registry =  $pimple['uecode_qpush.registry'];
             foreach (array_keys($pimple['uecode_qpush.config']['queues']) as $name) {
-                $registry->addProvider($name, $pimple['uecode_qpush.queues'][$name]);
+                $registry->addProvider($name.$pimple['uecode_qpush.queue_suffix'], $pimple['uecode_qpush.queues'][$name]);
             }
 
             return $registry;
         };
 
         $pimple['uecode_qpush.registry'] = function (Container $pimple) {
-            $queueSuffix = isset($pimple['uecode_qpush.config']['queue_suffix']) ? $pimple['uecode_qpush.config']['queue_suffix'] : '';
-            return new ProviderRegistry($queueSuffix);
+            return new ProviderRegistry($pimple['uecode_qpush.queue_suffix']);
         };
 
         $pimple['uecode_qpush.queues'] = function (Container $pimple) {
@@ -44,7 +47,7 @@ class QPushServiceProvider implements ServiceProviderInterface, EventListenerPro
                 $queues[$name] = function () use ($name, $options, $pimple) {
                     $providerConfig = $pimple['uecode_qpush.config']['providers'][$options['provider']];
 
-                    return $pimple['uecode_qpush.providerfactory']($name, $options['options'], $providerConfig);
+                    return $pimple['uecode_qpush.providerfactory']($name.$pimple['uecode_qpush.queue_suffix'], $options['options'], $providerConfig);
                 };
             }
 

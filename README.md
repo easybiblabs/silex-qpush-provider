@@ -4,6 +4,7 @@ Silex service provider for uecode/qpush-bundle
 ### Setup
 ```php
 $app->register(new \EasyBib\QPushServiceProvider(), [
+    'uecode_qpush.queue_suffix' => 'suffix', // Allows to configure suffix (e.g. environment name)
     'uecode_qpush.config' => [
         'cache' => 'my.cache.service',
         'providers' => [
