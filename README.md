@@ -48,7 +48,7 @@ $app->register(new \EasyBib\QPushServiceProvider(), [
                 'key' => 'fake key',
                 'secret' => 'fake secret',
                 'region' => 'us-east-1', // Needs to be set but won't be used
-                'base_url' => "http://localhost:4568",
+                'endpoint' => "http://localhost:4568",
             ],
         ],
     ],
