@@ -57,7 +57,7 @@ class QueueWorkerCommand extends Command
         }
 
         $messageCounter = 0;
-        while ($processMessageLimit === null || $processMessageLimit >= $messageCounter) {
+        while ($processMessageLimit === null || $processMessageLimit > $messageCounter) {
             $messageCounter += $this->pollQueue($name);
 
             if ($sleep) {
